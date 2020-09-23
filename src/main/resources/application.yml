@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://ホスト名:33336/java-db?serverTimezone=JST&nullCatalogMeansCurrent=true
+    username: root
+    password: passwd
+  jpa:
+    database: MYSQL
+    hibernate.ddl-auto: none
