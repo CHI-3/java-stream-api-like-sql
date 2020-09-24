@@ -39,11 +39,11 @@ public class CategoryItemService {
 	 * @return カテゴリ別商品一覧
 	 */
 	public List<CategoryItemDto> getCategoryItem(){
-		List<Item> items = itemRepository.findAll();
+		List<Item> itemsOrigin = itemRepository.findAll();
 		// 1. where:削除フラグがfalse(OFF）のものを取得
-		Stream<Item> items2 = items.stream().filter(i -> !(i.getIsDeleted()));
+		Stream<Item> items = itemsOrigin.stream().filter(i -> !(i.getIsDeleted()));
 		// 2. partition by：商品を商品カテゴリでグルーピング
-		Map<ItemCategory, List<Item>> itemCategoryMap = items2.collect(Collectors.groupingBy(Item::getItemCategory, LinkedHashMap::new, Collectors.toList()));
+		Map<ItemCategory, List<Item>> itemCategoryMap = items.collect(Collectors.groupingBy(Item::getItemCategory, LinkedHashMap::new, Collectors.toList()));
 
 		/*1, 2を同時に実施する場合
 		Map<ItemCategory, List<Item>> itemCategoryMap2 = items.stream().filter(i -> !(i.getIsDeleted())).collect(Collectors.groupingBy(Item::getItemCategory, LinkedHashMap::new, Collectors.toList()));
@@ -61,8 +61,8 @@ public class CategoryItemService {
 			// 3-1. order by:ソート（商品:優先順位昇順：優先順位がnullの場合は辞書式順序)
 			ic.getValue().sort(Comparator.comparing(Item::getRanking, Comparator.nullsLast(Comparator.naturalOrder())));
 			java.lang.reflect.Type itemDtos = new TypeToken<List<ItemDto>>() {}.getType();
-			List<ItemDto> items3 = mMapper.map(ic.getValue(), itemDtos);
-			categoryItem.setItemList(items3);
+			List<ItemDto> itemList = mMapper.map(ic.getValue(), itemDtos);
+			categoryItem.setItemList(itemList);
 			categoryItems.add(categoryItem);
 		}
 
